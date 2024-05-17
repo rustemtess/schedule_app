@@ -1,47 +1,139 @@
-const Table = () => {
+import { ReactHTML, ReactHTMLElement } from 'react';
+import { IDate, IObject, IDateObject, ITimeObject } from './interfaces';
+import { getDays } from '../../module/Date';
+
+interface ITable {
+    widthBlock?: number
+}
+
+const Table = ({ widthBlock = 200 }: ITable) => { 
+
+    const data: IObject[] = [
+        {
+            time: '8:00',
+            dateObjects: [
+                {
+                    date: 19,
+                    timeObjects: [
+                        {
+                            id: 1,
+                            text: 'Селектор с акимами городов и районов по вопросам КВИ',
+                            time: '8:10',
+                            fileUrl: null
+                        },
+                        {
+                            id: 1,
+                            text: 'Селектор с акимами городов и районов по вопросам КВИ',
+                            fileUrl: null,
+                            time: '8:20',
+                        }
+                    ]  
+                }
+            ] 
+        },
+        {
+            time: '9:00',
+            dateObjects: [
+                {
+                    date: 23,
+                    timeObjects: [
+                        {
+                            id: 1,
+                            text: 'Селектор с акимами городов и районов по вопросам КВИ',
+                            time: '8:10',
+                            fileUrl: null
+                        },
+                        {
+                            id: 1,
+                            text: 'Селектор с акимами городов и районов по вопросам КВИ',
+                            fileUrl: null,
+                            time: '8:20',
+                        }
+                    ]  
+                },
+                {
+                    date: 22,
+                    timeObjects: [
+                        {
+                            id: 1,
+                            text: 'Селектор с акимами городов и районов по вопросам КВИ',
+                            time: '8:10',
+                            fileUrl: null
+                        },
+                        {
+                            id: 1,
+                            text: 'Селектор с акимами городов и районов по вопросам КВИ',
+                            fileUrl: null,
+                            time: '8:20',
+                        }
+                    ]  
+                }
+            ] 
+        }
+    ];
+    
+
+    const getDate = () => {
+        return getDays().map( currentDate => (
+            <th key={ `${currentDate.year}-${currentDate.month}-${currentDate.day}` } className={ `w-[${ widthBlock }px]` }>
+                <h1 className='text-4xl font-medium'>{ currentDate.day }</h1>
+                <p className='text-gray-700 font-normal'>{ currentDate.weekName }</p>
+            </th>
+        ) )
+    }
 
     return (
-        <div className='flex flex-col max-w-[1400px] overflow-x-auto'>
-            <div className='flex'>
-                <p className='w-[60px] text-left'></p>
-                <div className='min-w-[200px] w-[200px] w-full flex flex-col items-center'>
-                    <h1 className='text-4xl font-medium'>05</h1>
-                    <p className='text-gray-700'>Понидельник</p>
-                </div>
-                <div className='min-w-[200px] w-[200px] w-full flex flex-col items-center'>
-                    <h1 className='text-4xl font-medium'>06</h1>
-                    <p className='text-gray-700'>Вторник</p>            
-                </div>
-                <div className='min-w-[200px] w-[200px] w-full flex flex-col items-center'>
-                    <h1 className='text-4xl font-medium'>07</h1>
-                    <p className='text-gray-700'>Среда</p>          
-                </div>
-                <div className='min-w-[200px] w-[200px] w-full flex flex-col items-center'>
-                    <h1 className='text-4xl font-medium'>08</h1>
-                    <p className='text-gray-700'>Четверг</p>           
-                </div>
-                <div className='min-w-[200px] w-[200px] w-full flex flex-col items-center'>
-                    <h1 className='text-4xl font-medium'>09</h1>
-                    <p className='text-gray-700'>Пятница</p>          
-                </div>
-                <div className='min-w-[200px] w-[200px] w-full flex flex-col items-center'>
-                    <h1 className='text-4xl font-medium'>10</h1>
-                    <p className='text-gray-700'>Суббота</p>       
-                </div>
-                <div className='min-w-[200px] w-[200px] w-full flex flex-col items-center'>
-                    <h1 className='text-4xl font-medium'>11</h1>
-                    <p className='text-gray-700'>Воскресенье</p>          
-                </div>
-            </div>
-            <div className='w-full border-t-[0.5px]'>
-                <p className='min-w-[60px] w-[60px] text-right'>8:00</p>
-            </div>
-            <div className='w-full border-t-[0.5px]'>
-                <p className='min-w-[60px] w-[60px] text-right'>9:00</p>
-            </div>
+        <div className='overflow-x-auto w-full mt-3'>
+            <table>
+                <tr className='flex'>
+                    <th className='w-[60px]'></th>
+                    { getDate() }
+                </tr>
+                <tr className='flex'>
+                    <th className='w-[50px]'></th>
+                    <th className={ `w-[${ widthBlock }px] py-1.5` }>
+                        <button className="bg-black text-white w-full p-2 font-normal">+ Добавить</button>
+                    </th>
+                    <th className={ `w-[${ widthBlock }px] py-1.5` }>
+                        <button className="bg-black text-white w-full p-2 font-normal">+ Добавить</button>
+                    </th>
+                    <th className={ `w-[${ widthBlock }px] py-1.5` }>
+                        <button className="bg-black text-white w-full p-2 font-normal">+ Добавить</button>
+                    </th>
+                    <th className={ `w-[${ widthBlock }px] py-1.5` }>
+                        <button className="bg-black text-white w-full p-2 font-normal">+ Добавить</button>  
+                    </th>
+                    <th className={ `w-[${ widthBlock }px] py-1.5` }>
+                        <button className="bg-black text-white w-full p-2 font-normal">+ Добавить</button>
+                    </th>
+                    <th className={ `w-[${ widthBlock }px] py-1.5` }>
+                        <button className="bg-black text-white w-full p-2 font-normal">+ Добавить</button>
+                    </th>
+                    <th className={ `w-[${ widthBlock }px] py-1.5` }>
+                        <button className="bg-black text-white w-full p-2 font-normal">+ Добавить</button>
+                    </th>
+                </tr>
+                { data.map( currentObject => (
+                    <tr className='flex'>
+                        <td className='w-[50px] px-2 text-right '>{ currentObject.time }</td>
+                        { getDays().map( currentDay => (
+                            <td className={ `w-[${ widthBlock }px] border-[0.5px] flex flex-col` }>
+                                { currentObject.dateObjects.map( currentObjectTime => {
+                                    if( currentObjectTime.date === currentDay.day ) {
+                                        return currentObjectTime.timeObjects.map( currentTime => (
+                                            <div>
+                                                <h3>{ currentTime.text }</h3>
+                                            </div>                                            
+                                        ) )
+                                    }
+                                } ) }
+                            </td>
+                        ) ) }
+                    </tr>
+                ) ) }
+            </table>
         </div>
     )
 
-};
-
-export default Table;
+}
+export default Table

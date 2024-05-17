@@ -1,6 +1,6 @@
-import Container from "../../components/Container"
-import Table from "../../components/Table"
-import { formatDate } from "../../module/Date"
+import Container from "../../components/Container";
+import Table from "../../components/Table";
+import { formatDate } from '../../module/Date';
 
 const Index = () => {
 
@@ -26,7 +26,7 @@ const Index = () => {
                     </a>
                 </nav>
             </section>
-            <section className='w-full min-h-screen flex flex-col overflow-x-auto'>
+            <section className='w-full min-h-screen flex flex-col overflow-x-auto '>
                 <header className='w-full flex items-center justify-between px-4 py-2 border-b-[0.5px] border-gray-200'>
                     <div>
                         <h2 className='text-2xl font-medium'>{ formatDate(new Date()) }</h2>
