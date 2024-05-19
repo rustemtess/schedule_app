@@ -17,12 +17,17 @@ export function formatDate(date: Date): string {
     return `${day} ${month} ${year} г.`;
 }
 
-function getWeekName(weekNumber: number): string {
+/**
+ * Получить название дня недели
+ * @param weekNumber 
+ * @returns 
+ */
+export function getWeekName(weekNumber: number): string {
     const weekNames: Array<string> = [
         'Понедельник', 'Вторник', 'Среда', 'Четверг',
         'Пятница', 'Суббота', 'Воскресенье'
     ];
-    return weekNames[weekNumber];
+    return weekNames[weekNumber - 1];
 }
 
 /**
@@ -36,12 +41,37 @@ export function getDays(date: Date = new Date()): Array<IDay> {
         currentDate.setDate(date.getDate() + i)
         const day: IDay = {
             weekNumber: (currentDate.getDay() !== 0) ? currentDate.getDay() : 7,
-            weekName: getWeekName(currentDate.getDate()),
             day: currentDate.getDate(), 
             month: currentDate.getMonth() + 1,
-            year: currentDate.getFullYear()
+            year: currentDate.getFullYear(),
+            date: currentDate
         };
         days.push(day);
     }
     return days;
+}
+
+/**
+ * Получить день по дате
+ * @param date
+ * @returns IDay
+ */
+export function getDay(date: Date): IDay {
+    const currentDate = new Date(date);
+    return {
+        weekNumber: (currentDate.getDay() !== 0) ? currentDate.getDay() : 7,
+        day: currentDate.getDate(), 
+        month: currentDate.getMonth() + 1,
+        year: currentDate.getFullYear(),
+        date: currentDate        
+    }
+}
+
+/**
+ * Получить дату
+ * @param date 
+ * @returns string YYYY-mm-dd
+ */
+export function getDate(date: Date): string {
+    return date.toLocaleDateString().split('.').reverse().join('-')
 }
