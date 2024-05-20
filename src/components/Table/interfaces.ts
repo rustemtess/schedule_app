@@ -7,7 +7,8 @@ export interface ITimeObject {
     id: number,
     text: string,
     time: string
-    fileUrl: string | null
+    fileUrl: string | null,
+    rgb: string
 }
 
 export interface IDateObject {

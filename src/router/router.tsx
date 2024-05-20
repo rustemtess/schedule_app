@@ -1,5 +1,6 @@
 import { Suspense, lazy, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { getSessionAccessToken } from "../module/Session";
 
 const Router = () => {
 
@@ -10,7 +11,7 @@ const Router = () => {
     const Users = lazy(() => import('../pages/users'));
 
     useEffect(() => {
-        if(sessionStorage.getItem('access_token') !== null) 
+        if(getSessionAccessToken() !== '') 
             setIsAuth(true);
         else setIsAuth(false);
     }, [])

@@ -5,3 +5,8 @@ export interface IDay {
     year: number,
     date: Date
 } 
+
+export interface IRGB {
+    id: number,
+    rgb: string
+}

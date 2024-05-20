@@ -1,7 +1,7 @@
-import { useState } from 'react'
-import Container from '../../components/Container'
-import { API_URL } from '../../module/API'
-import { useNavigate } from 'react-router-dom'
+import { useState } from 'react';
+import Container from '../../components/Container';
+import { API_URL } from '../../module/API';
+import { useNavigate } from 'react-router-dom';
 
 interface IAuth {
     setIsAuth: Function

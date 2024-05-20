@@ -5,5 +5,11 @@ export interface IUser {
     middlename: string,
     email: string,
     number: string,
-    permissionId: number
+    permissionId: number,
+    permissionName: string
+}
+
+export interface IPermission {
+    id: number,
+    name: string
 }

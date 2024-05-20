@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { API_URL } from "../../module/API";
 import { getDate, getWeekName } from "../../module/Date";
-import { IDay } from "../../module/Date/interfaces";
-import { getList } from "../../module/API/api.date";
+import { IDay, IRGB } from "../../module/Date/interfaces";
+import { getColors, getList } from "../../module/API/api.date";
+import { getSessionAccessToken } from "../../module/Session";
 
 interface IAddTime {
     setAddTime: Function,
@@ -14,18 +15,30 @@ const AddTime = ( { setAddTime, currentDay, setDate }: IAddTime ) => {
 
     const [time, setTime] = useState<string>('');
     const [text, setText] = useState<string>('');
+    const [file, setFile] = useState<File|string>('');
+    const [colors, setColors] = useState<Array<IRGB>>();
+    const [colorId, setColorId] = useState<number>(1);
+
+    const fetchData = async () => {
+        setColors(await getColors());
+    }
+
+    useEffect(() => {
+        fetchData();
+    }, []);
 
     const handleClick = async () => {
         const form = new FormData()
         form.append('date', getDate(currentDay.date));
         form.append('time', time);
         form.append('text', text);
-        form.append('file', 'null');
-        form.append('userId', '1');
+        form.append('file', file);
+        form.append('colorId', String(colorId));
+        form.append('access_token', getSessionAccessToken());
         await fetch(API_URL + 'date/create', {
             method: 'POST',
             body: form
-        })
+        });
         setDate(await getList())
     }
 
@@ -52,7 +65,24 @@ const AddTime = ( { setAddTime, currentDay, setDate }: IAddTime ) => {
                 </div>
                 <div className='flex flex-col gap-1'>
                     <p className='text-gray-600 text-sm'><span className='text-gray-500 italic'>(Необязательно)</span> Загрузить файл</p>
-                    <input className='outline-none border p-1.5 rounded' type='file' />
+                    <input onChange={(e) => {
+                            const selectedFile = e.target.files && e.target.files[0]; // Проверяем, не является ли e.target.files null
+                            if (selectedFile) {
+                                setFile(selectedFile);
+                            }
+                        }}  className='outline-none border p-1.5 rounded' type='file' 
+                        accept=".pdf,.doc,.docx,.txt,.csv,.json" />
+                </div>
+                <div className='flex flex-col gap-1'>
+                    <p className='text-gray-600 text-sm'>Выберите цвет</p>
+                    <div className='flex flex-wrap gap-2'>
+                        { colors?.map( color => {
+                            return <button key={ color.id } className={ `w-[30px] h-[30px] rounded-lg ${ (color.id == colorId) ? 'border-[3px] border-[#BC9CCC]' : null }` }
+                            style={ {
+                                'backgroundColor': `rgb(${ color.rgb })`
+                            } } onClick={ () => setColorId(color.id) }></button>
+                        } ) }
+                    </div>
                 </div>
                 <button onClick={ () => handleClick() } className='bg-black text-white p-2 py-2.5 rounded hover:bg-gray-800'>Добавить</button>
             </div>
