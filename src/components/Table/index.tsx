@@ -16,6 +16,7 @@ const Table = ({ countMeetToParent, isEdit = false }: ITable) => {
     const [isAddTime, setAddTime] = useState<boolean>(false);
     const [day, setDay] = useState<IDay>( getDay(new Date()) );
     const [data, setData] = useState<Array<IObject>>();
+    const [view, setView] = useState<number>(0);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -72,7 +73,9 @@ const Table = ({ countMeetToParent, isEdit = false }: ITable) => {
                                                 style={ {
                                                     'backgroundColor': `rgba(${currentTime.rgb}, 0.08)`
                                                 } }>
-                                                    <h3 className={ `text-sm w-[200px] truncate` } style={ {
+                                                    <h3 onClick={ () => {
+                                                        setView((currentTime.id != view) ? currentTime.id : 0)
+                                                    } } className={ `cursor-pointer text-sm w-[200px] ${ (currentTime.id != view) ? 'truncate' : 'break-words' }` } style={ {
                                                         'color': `rgb(${ currentTime.rgb })`
                                                     } }>{ currentTime.text }</h3>
                                                     { (currentTime.fileUrl) ? <a target='_blank' href={ API_URL + 'files/' + currentTime.fileUrl } className='flex items-center gap-1 text-sm cursor-pointer'>

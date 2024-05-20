@@ -17,13 +17,13 @@ const Index = () => {
 
     return (
         <Container>
-            <Menu id={1} />
+            <Menu id={1} data={ data } />
             <section className='w-full min-h-screen flex flex-col overflow-y-auto pb-4'>
                 <Header data={ setData }>
                     <h2 className='text-2xl font-medium'>{ formatDate(new Date()) }</h2>
                     <p className='text-base'>Запланирована { countMeet } встреч</p>
                 </Header>
-                <Table countMeetToParent={ setCountMeet } isEdit={ (data?.permissionId && data?.permissionId > 1) ? true : false } />
+                <Table countMeetToParent={ setCountMeet } isEdit={ (data?.permissionId && data?.permissionId >= 2) ? true : false } />
             </section>
         </Container>
     )

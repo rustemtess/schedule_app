@@ -40,6 +40,7 @@ const AddTime = ( { setAddTime, currentDay, setDate }: IAddTime ) => {
             body: form
         });
         setDate(await getList())
+        setAddTime(false)
     }
 
     return (

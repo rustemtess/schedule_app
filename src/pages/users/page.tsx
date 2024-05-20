@@ -6,51 +6,60 @@ import { getPermissions, getUsers } from '../../module/API/api.users';
 import { IPermission, IUser } from './interface';
 import Header from '../../components/Header';
 import { API_URL } from '../../module/API';
+import { useNavigate } from 'react-router-dom';
 
-const Users = () => {
+const Users = ( ) => {
     
+    const navigate = useNavigate();
     const [isRegisterForm, setRegisterForm] = useState(false);
     const [users, setUsers] = useState<Array<IUser>>([]);
     const [permissions, setPermissions] = useState<Array<IPermission>>([]);
     const [data, setData] = useState<IUser>();
     const [permissionId, setPermissionId] = useState<number>();
+    const [isUpdate, setIsUpdate] = useState<number>(0);
+
+    useEffect(() => {
+        setPermissionId(data?.permissionId)
+        if(data?.permissionId && data?.permissionId <= 2)
+            navigate('/')
+    }, [data, isUpdate])
+    
+    useEffect(() => {
+        fetchData()
+    }, []);
 
     const fetchData = async () => {
         setUsers(await getUsers());
         setPermissions(await getPermissions());
     };
 
-    useEffect(() => {
-        fetchData()
-    }, []);
-
-    useEffect(() => {
-        setPermissionId(data?.permissionId)
-    }, [data])
-    
-    const deleteById = (user_id: number) => {
+    const deleteById = async (user_id: number) => {
         const form = new FormData();
         form.append('user_id', String(user_id));
-        fetch(API_URL + 'users/delete', {
+        await fetch(API_URL + 'users/delete', {
             method: 'POST',
             body: form
         });
+        await fetchData()
     };
 
-    const updateById = (user_id: number) => {
+    const updateById = async (user_id: number) => {
         const form = new FormData();
+        form.append('user_id', String(user_id));
         form.append('permission_id', String(permissionId));
-        fetch(API_URL + 'users/update', {
+        await fetch(API_URL + 'users/update', {
             method: 'POST',
             body: form
         });
+        await fetchData()
+        setIsUpdate(isUpdate + 1)
     };
 
     return (
         <Container>
-            <Menu id={2} />
+            <Menu id={2} data={data} />
             <section className='w-full min-h-screen flex flex-col overflow-x-auto'>
-                <Header data={ setData }>
+                <Header data={ setData } isUpdated={ isUpdate } >
                     <h2 className='text-2xl font-medium'>Пользователи</h2>
                     <p className='text-base'>В базе найдено { users.length }</p>
                 </Header>
@@ -77,16 +86,16 @@ const Users = () => {
                                 <th className='w-[150px] w-full font-normal px-2'>{ user.number }</th>
                                 <th className='w-[150px] w-full font-normal px-2'>{ user.email }</th>
                                 <th className='w-[170px] w-full font-normal px-2'>
-                                    <select onChange={ (e) => setPermissionId(Number(e.target.value)) } className='bg-[#F9F9F9] outline-none cursor-pointer hover:bg-gray-100 p-2 rounded'>
+                                    <select defaultValue={ user.permissionId } onChange={ (e) => setPermissionId(Number(e.target.value)) } className='bg-[#F9F9F9] outline-none cursor-pointer hover:bg-gray-100 p-2 rounded'>
                                         { permissions.map( permission => {
                                             return (
-                                                <option selected={ (permission.id === user.permissionId) ? true : false } value={ permission.id }>{ permission.name }</option>
+                                                <option key={ permission.id } selected={ (permission.id === user.permissionId) ? true : false } value={ permission.id }>{ permission.name }</option>
                                             )
                                         } ) }
                                     </select>
                                 </th>
                                 <th className='flex justify-center w-[120px] w-full gap-1'>
-                                    <button onClick={ () => console.log(permissionId) } className='flex items-center w-fit h-fit bg-black rounded p-2 text-white font-normal gap-1.5 px-3 hover:bg-gray-800'>
+                                    <button onClick={ () => updateById(user.id) } className='flex items-center w-fit h-fit bg-black rounded p-2 text-white font-normal gap-1.5 px-3 hover:bg-gray-800'>
                                         <svg width='16' height='16' viewBox='0 0 18 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
                                             <g clip-path='url(#clip0_55_324)'>
                                                 <path d='M6.21798 13.6866C5.93505 13.687 5.6548 13.6356 5.39333 13.5353C5.13187 13.435 4.89434 13.2877 4.6944 13.1019L0.676758 9.3739L1.69248 8.43057L5.71012 12.1592C5.84483 12.2842 6.0275 12.3544 6.21798 12.3544C6.40846 12.3544 6.59114 12.2842 6.72584 12.1592L16.7775 2.83057L17.7932 3.77323L7.74157 13.1019C7.54162 13.2877 7.30409 13.435 7.04263 13.5353C6.78116 13.6356 6.50091 13.687 6.21798 13.6866Z' fill='white'/>

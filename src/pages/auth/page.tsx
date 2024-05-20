@@ -2,6 +2,7 @@ import { useState } from 'react';
 import Container from '../../components/Container';
 import { API_URL } from '../../module/API';
 import { useNavigate } from 'react-router-dom';
+import toast, { Toaster } from 'react-hot-toast';
 
 interface IAuth {
     setIsAuth: Function
@@ -26,10 +27,17 @@ const Auth  = ( { setIsAuth }: IAuth ) => {
             }
         }).then(result => {
             if(result.access_token) {
-                sessionStorage.setItem('access_token', result.access_token)
-                setIsAuth(true)
-                navigate('/');
+                toast.success('Successful authentication');
+                setTimeout(() => {
+                    sessionStorage.setItem('access_token', result.access_token)
+                    setIsAuth(true)
+                    navigate('/');
+                }, 2000)
+            }else {
+                toast.error('Login or password is incorrect');
             }
+        }).catch(e => {
+            toast.error('fetch failed');
         });;
     }
 
@@ -54,6 +62,7 @@ const Auth  = ( { setIsAuth }: IAuth ) => {
                     <button onClick={ () => handleClick() } className='w-full h-fit bg-black text-white rounded px-4 py-3 hover:bg-gray-800'>Войти в аккаунт</button>
                 </div>
             </div>
+            <Toaster />
         </Container>
     )
 }
