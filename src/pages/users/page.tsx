@@ -17,6 +17,7 @@ const Users = ( ) => {
     const [data, setData] = useState<IUser>();
     const [permissionId, setPermissionId] = useState<number>();
     const [isUpdate, setIsUpdate] = useState<number>(0);
+    const [fullname, setFullname] = useState<string>('');
 
     useEffect(() => {
         setPermissionId(data?.permissionId)
@@ -43,6 +44,18 @@ const Users = ( ) => {
         await fetchData()
     };
 
+    const fetchData2 = async () => {
+        const form = new FormData();
+        form.append('fullname', fullname);
+        await fetch(API_URL + 'users/search', {
+            method: 'POST',
+            body: form
+        }).then(response => {
+            if(response.status === 200) return response.json()
+        }
+        ).then(result => setUsers(result));
+    }
+
     const updateById = async (user_id: number) => {
         const form = new FormData();
         form.append('user_id', String(user_id));
@@ -66,7 +79,9 @@ const Users = ( ) => {
                 <div className='flex justify-between gap-2 p-3'>
                     
                     <button onClick={ () => setRegisterForm(!isRegisterForm)} className='w-fit h-fit bg-black text-white rounded px-4 py-1.5 pb-2 hover:bg-gray-800'>Добавить</button>
-                    <input placeholder='Поиск...' className='outline-none max-w-[300px] w-full h-fit bg-gray-100 border rounded px-3.5 py-1.5'></input>
+                    <input onChange={ (e) => setFullname(e.target.value) } onKeyUp={ (e) => {
+                        if(e.key === 'Enter') fetchData2()
+                    } } placeholder='Поиск...' className='outline-none max-w-[300px] w-full h-fit bg-gray-100 border rounded px-3.5 py-1.5'></input>
                     
                 </div>
                 { isRegisterForm && <Register setRegisterForm={ setRegisterForm } setUsers={ setUsers } /> }
