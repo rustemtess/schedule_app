@@ -52,6 +52,17 @@ export function getDays(date: Date = new Date()): Array<IDay> {
 }
 
 /**
+ * Получить дату до
+ * @param date 
+ * @returns Date
+ */
+export function getAfterDate(date: Date): Date {
+    const currentDate = new Date(date);
+    currentDate.setDate(date.getDate() + 6);
+    return currentDate;
+}
+
+/**
  * Получить день по дате
  * @param date
  * @returns IDay
@@ -70,8 +81,19 @@ export function getDay(date: Date): IDay {
 /**
  * Получить дату
  * @param date 
- * @returns string YYYY-mm-dd
- */
+ * @returns Date YYYY-mm-dd
+ */;
 export function getDate(date: Date): string {
     return date.toLocaleDateString().split('.').reverse().join('-')
+}
+
+/**
+ * Фильтровать дату и время
+ * @param dateAndTime YYYY-mm-dd HH:mm:ss
+ * @returns dd.mm.YYYY HH:mm:ss
+ */
+export function filterDateAndTime(dateAndTime: string|undefined): string|undefined {
+    if(!dateAndTime) return;
+    const arr = dateAndTime.split(' ');
+    return `${ arr[0].split('-').reverse().join('.') } ${ arr[1] }`
 }

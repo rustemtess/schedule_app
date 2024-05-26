@@ -10,7 +10,7 @@ interface IAuth {
 
 const Auth  = ( { setIsAuth }: IAuth ) => {
     
-    const [login, setLogin] = useState<string>('');
+    const [login, setLogin] = useState<string>('+7');
     const [password, setPassword] = useState<string>('');
     const navigate = useNavigate();
 
@@ -27,17 +27,18 @@ const Auth  = ( { setIsAuth }: IAuth ) => {
             }
         }).then(result => {
             if(result.access_token) {
-                toast.success('Successful authentication');
+                toast.success('Успешная авторизация');
                 setTimeout(() => {
                     sessionStorage.setItem('access_token', result.access_token)
                     setIsAuth(true)
                     navigate('/');
                 }, 2000)
             }else {
-                toast.error('Login or password is incorrect');
+                toast.error('Неправильный логин или пароль');
+                setPassword('')
             }
         }).catch(e => {
-            toast.error('fetch failed');
+            toast.error('Ошибка запроса');
         });;
     }
 
