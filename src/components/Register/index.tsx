@@ -17,20 +17,34 @@ const Register = ( { setRegisterForm, setUsers }: IRegister ) => {
     const [password, setPassword] = useState<string>('');
     const [permissionId, setPermissionId] = useState<string>('1');
 
+    let isSubmitting = false;
+
     const handleClick = async () => {
-        const form = new FormData();
-        form.append('name', name);
-        form.append('surname', surname);
-        form.append('middlename', middlename);
-        form.append('number', number);
-        form.append('email', email);
-        form.append('password', password);
-        form.append('permissionId', permissionId);
-        await fetch(API_URL + 'users/create', {
-            method: 'POST',
-            body: form
-        })
-        setUsers(await getUsers());
+        if(
+            name.trim() !== '' && 
+            surname.trim() !== '' &&  
+            number.trim() !== '' &&
+            email.trim() !== '' &&
+            password.trim() !== ''
+        ) {
+            if (isSubmitting) return;
+            isSubmitting = true;
+            const form = new FormData();
+            form.append('name', name);
+            form.append('surname', surname);
+            form.append('middlename', middlename);
+            form.append('number', number);
+            form.append('email', email);
+            form.append('password', password);
+            form.append('permissionId', permissionId);
+            await fetch(API_URL + 'users/create', {
+                method: 'POST',
+                body: form
+            })
+            setUsers(await getUsers());
+            setRegisterForm(false);
+            isSubmitting = false;
+        }
     }
 
     return (

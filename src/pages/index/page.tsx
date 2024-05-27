@@ -12,7 +12,6 @@ import { createPortal } from "react-dom";
 
 const Index = () => {
 
-    const { toPDF, targetRef } = usePDF({ filename: 'test.pdf' });
     const [data, setData] = useState<IUser>();
     const [countMeet, setCountMeet] = useState<number>(0);
     const [text, setText] = useState<string>('');
@@ -20,14 +19,17 @@ const Index = () => {
     const [date, setDate] = useState<Date>(new Date());
     const [isExport, setExport] = useState<number>(0);
     const [isShowForm, setShowForm] = useState<boolean>(false);
+    const { toPDF, targetRef } = usePDF({ filename: `table-${ date.toLocaleDateString() }.pdf` });
 
     function getToday() {
         return date.toISOString().substr(0, 10);
     }
 
+
     useEffect(() => {
         if(isShowForm && isExport > 0 && targetRef.current) {
             toPDF()
+            setShowForm(false)
         }
     }, [isExport, targetRef])
 
@@ -101,7 +103,7 @@ const Index = () => {
                 <Table userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isEdit={ (data?.permissionId && data?.permissionId >= 2) ? true : false } />
                 { createPortal(
                     <div className='absolute top-[-9999px]' ref={ targetRef }>
-                        <Table isExport={ true } userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isEdit={ false } />
+                        <Table user={ data } isExport={ true } userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isEdit={ false } />
                     </div>,
                     document.body
                 ) }

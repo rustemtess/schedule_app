@@ -1,11 +1,12 @@
 import {  useEffect, useState } from 'react';
 import { IObject } from './interfaces';
-import { getDay, getDays, getWeekName } from '../../module/Date';
+import { getDay, getDays, getWeekName, formatDate } from '../../module/Date';
 import AddTime from '../AddTime';
 import { IDay } from '../../module/Date/interfaces';
 import { getList } from '../../module/API/api.date';
 import { API_URL } from '../../module/API';
 import Info from './Info';
+import { IUser } from '../../pages/users/interface';
 
 interface ITable {
     countMeetToParent: Function,
@@ -13,10 +14,11 @@ interface ITable {
     dataList?: Array<IObject>,
     date?: Date,
     userId: number|undefined,
-    isExport?: boolean
+    isExport?: boolean,
+    user?: IUser|undefined
 }
 
-const Table = ({ countMeetToParent, isEdit = false, dataList, date = new Date(), userId, isExport = false }: ITable) => { 
+const Table = ({ countMeetToParent, isEdit = false, dataList, date = new Date(), userId, isExport = false, user }: ITable) => { 
 
     const [isAddTime, setAddTime] = useState<boolean>(false);
     const [day, setDay] = useState<IDay>( getDay(new Date()) );
@@ -52,8 +54,8 @@ const Table = ({ countMeetToParent, isEdit = false, dataList, date = new Date(),
         return getDays(date).map( currentDate => {
             return (
                 <th key={ `${currentDate.year}-${currentDate.month}-${currentDate.day}` } className={ `w-[220px] mb-2` }>
-                    <h1 className='text-4xl font-medium'>{ currentDate.day }</h1>
-                    <p className='text-gray-700 font-normal'>{ getWeekName(currentDate.weekNumber) }</p>
+                    <h1 className={ `${ (!isExport) ? `text-4xl` : `text-5xl mb-2` } font-medium` }>{ currentDate.day }</h1>
+                    <p className={ `${ (!isExport) ? '' : 'text-xl' } text-gray-700 font-normal` }>{ getWeekName(currentDate.weekNumber) }</p>
                     {
                         (isEdit) ? <button onClick={() => {
                             setAddTime(true)
@@ -70,30 +72,32 @@ const Table = ({ countMeetToParent, isEdit = false, dataList, date = new Date(),
         <div className='overflow-x-auto overflow-y-auto w-full mt-3 pb-14'>
             { isAddTime && <AddTime setDate={ setData } setAddTime={ setAddTime } currentDay={ day } /> }
             { isInfo && <Info setDate={ setData } userId={ userId } timeId={ timeId } setInfo={ setInfo } edit={ isEdit } /> }
+            { isExport && <div className='px-6 text-lg font-sans flex items-center justify-between'>
+                <h4 className='text-lg'>Дата таблицы: { formatDate(date) }</h4>
+                <h4>Время распечатки: { formatDate(new Date()) } { new Date().getHours() + ':' + (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() }. Распечатано: { user?.surname } { user?.name } { user?.middlename }</h4>
+                </div> }
+            
             <table>
                 <tbody>
                     <tr className='flex'>
                         <th className='w-[50px]'></th>
                         { getDate() }
                     </tr>
-                    { data?.map( (currentObject, index) => (
-                        <tr key={ index } className='flex'>
-                            <td key={ index } className='w-[50px] px-2 text-right '>{ currentObject.time }</td>
+                    { data?.map( (currentObject, index) => {
+                        return <tr key={ index } className='flex'>
+                            <td key={ index } className={ `w-[50px] px-2 text-right ${ (!isExport) ? '' : 'text-lg' }` }>{ currentObject.time }</td>
                             { getDays(date).map( (currentDay, index) => (
                                 <td key={ index } className={ `w-[220px] border-[0.5px] flex flex-col gap-1` }>
                                     { currentObject.dateObjects.map( currentObjectTime => {
                                         if( currentObjectTime.date == currentDay.day ) {
                                             return currentObjectTime.timeObjects.map( (currentTime, index) => {
-                                                return <div onClick={ () => {
-                                                    setTimeId(currentTime.id)
-                                                    setInfo(!isInfo)
-                                                } } key={ index } className='p-1 flex flex-col gap-1.5 rounded px-2 py-2'
+                                                return <div key={ index } className='p-1 flex flex-col gap-1.5 rounded px-2 py-2'
                                                 style={ {
                                                     'backgroundColor': `rgba(${currentTime.rgb}, 0.08)`
                                                 } }>
                                                     <div className='flex gap-0.5 justify-between items-start'>
-                                                        <h3 className={ `cursor-pointer text-sm w-[185px] ${ (currentTime.id != view && !isExport) ? 'truncate' : 'break-words' }` } style={ {
-                                                            'color': `rgb(${ currentTime.rgb })`
+                                                        <h3 className={ `cursor-pointer ${ (!isExport) ? 'text-sm' : 'mt-[-0.5em] text-lg break-all leading-tight' } w-[185px] ${ (currentTime.id != view && !isExport) ? 'truncate' : 'break-words' }` } style={ {
+                                                            'color': `${ (!isExport) ? `rgb(${ currentTime.rgb }` : `black` })`
                                                         } }>{ currentTime.text }</h3>
                                                         { !isExport && <button onClick={ (e) => {
                                                             e.stopPropagation()
@@ -115,9 +119,18 @@ const Table = ({ countMeetToParent, isEdit = false, dataList, date = new Date(),
                                                     <div className='flex items-center gap-1 text-sm'>
                                                         { !isExport && <svg fill={ `rgb(${ currentTime.rgb })` } xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="14" height="14"><path d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm0,22A10,10,0,1,1,22,12,10.011,10.011,0,0,1,12,22Z"/><path d="M12,6a1,1,0,0,0-1,1v4.325L7.629,13.437a1,1,0,0,0,1.062,1.7l3.84-2.4A1,1,0,0,0,13,11.879V7A1,1,0,0,0,12,6Z"/></svg> }
                                                         <p style={ {
-                                                            'color': `rgb(${ currentTime.rgb })`
+                                                            'color': `${ (!isExport) ? `rgb(${ currentTime.rgb }` : `black` })`
                                                         } }>{ currentTime.time }</p>
                                                     </div>
+                                                    { !isExport && <div onClick={ () => {
+                                                        setTimeId(currentTime.id)
+                                                        setInfo(!isInfo)
+                                                    } } className='flex items-center gap-1 cursor-pointer'>
+                                                        <svg fill={ `rgb(${ currentTime.rgb })` } xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="14" height="14"><path d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm0,22A10,10,0,1,1,22,12,10.011,10.011,0,0,1,12,22Z"/><path d="M12,10H11a1,1,0,0,0,0,2h1v6a1,1,0,0,0,2,0V12A2,2,0,0,0,12,10Z"/><circle cx="12" cy="6.5" r="1.5"/></svg>
+                                                        <p className='text-sm' style={ {
+                                                            'color': `rgb(${ currentTime.rgb })`
+                                                        } }>Посмотреть информацию</p>
+                                                    </div> }
                                                 </div>                                            
                                         } )
                                         }
@@ -125,7 +138,7 @@ const Table = ({ countMeetToParent, isEdit = false, dataList, date = new Date(),
                                 </td>
                             ) ) }
                         </tr>
-                    ) ) }
+                    } ) }
                 </tbody>
             </table>
         </div>

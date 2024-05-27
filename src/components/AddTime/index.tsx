@@ -13,7 +13,7 @@ interface IAddTime {
 
 const AddTime = ( { setAddTime, currentDay, setDate }: IAddTime ) => {
 
-    const [time, setTime] = useState<string>('');
+    const [time, setTime] = useState<string>('00:00');
     const [text, setText] = useState<string>('');
     const [file, setFile] = useState<File|string>('');
     const [colors, setColors] = useState<Array<IRGB>>();
@@ -27,21 +27,29 @@ const AddTime = ( { setAddTime, currentDay, setDate }: IAddTime ) => {
         fetchData();
     }, []);
 
+    let isSubmitting = false;
+
     const handleClick = async () => {
-        const form = new FormData()
+        if (isSubmitting) return;
+        isSubmitting = true;
+    
+        const form = new FormData();
         form.append('date', getDate(currentDay.date));
         form.append('time', time);
         form.append('text', text);
         form.append('file', file);
         form.append('colorId', String(colorId));
         form.append('access_token', getSessionAccessToken());
+    
         await fetch(API_URL + 'date/create', {
             method: 'POST',
             body: form
         });
-        setDate(await getList())
-        setAddTime(false)
-    }
+    
+        setDate(await getList());
+        setAddTime(false);
+        isSubmitting = false;
+    };
 
     return (
         <div className='absolute top-0 left-0 w-full min-h-screen flex justify-center items-center' style={ {
@@ -56,7 +64,7 @@ const AddTime = ( { setAddTime, currentDay, setDate }: IAddTime ) => {
                 </div>
                 <div className='flex flex-col gap-1'>
                     <p className='text-gray-600 text-sm'><span className='text-red-500 font-bold'>*</span> Указать время</p>
-                    <input onChange={(e) => setTime(e.target.value)} className='outline-none border p-1.5 rounded' type='time' />
+                    <input value={ time } onChange={(e) => setTime(e.target.value)} className='outline-none border p-1.5 rounded' type='time' />
                 </div>
                 <div className='flex flex-col gap-1'>
                     <p className='text-gray-600 text-sm'><span className='text-red-500 font-bold'>*</span> Введите текст</p>

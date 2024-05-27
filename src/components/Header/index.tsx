@@ -51,7 +51,7 @@ const Header = ( { children, data, isUpdated }: IHeader ) => {
         return <div className="flex items-center justify-right w-full max-w-[300px] gap-3">
             <div className='w-full'>
                 <h4 className="text-[#000000E5] text-xl text-right truncate">{ 
-                    `${ user?.surname } ${ user?.name.substring(0, 1) }. ${ user?.middlename.substring(0, 1) }.` 
+                    `${ user?.surname } ${ user?.name.substring(0, 1) }. ${ (user?.middlename) ? user?.middlename.substring(0, 1) + '.' : null  }` 
                 }</h4>
                 <h5 className="mt-[-3px] text-[#00000099] text-right">{ user?.permissionName }</h5>
             </div>
@@ -77,7 +77,7 @@ const Header = ( { children, data, isUpdated }: IHeader ) => {
             <div className='absolute top-[4.8em] right-0 bg-white w-fit flex flex-col px-4 py-2 gap-2 rounded border-[0.5px] border-gray-200'>
                 <div className='w-full'>
                     <h4 className="text-[#000000E5] text-xl text-right truncate">{ 
-                        `${ user?.surname } ${ user?.name.substring(0, 1) }. ${ user?.middlename.substring(0, 1) }.` 
+                        `${ user?.surname } ${ user?.name.substring(0, 1) }. ${ (user?.middlename) ? user?.middlename.substring(0, 1) + '.' : null  }` 
                     }</h4>
                     <h5 className="mt-[-3px] text-[#00000099] text-right">{ user?.permissionName }</h5>
                 </div>
