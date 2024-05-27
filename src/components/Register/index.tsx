@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { API_URL } from "../../module/API";
 import { getUsers } from "../../module/API/api.users";
+import { IPermission } from "../../pages/users/interface";
 
 interface IRegister {
     setRegisterForm: Function,
-    setUsers: Function
+    setUsers: Function,
+    userId?: number,
+    userPermissionId?: number,
+    permissions: Array<IPermission>
 }
 
-const Register = ( { setRegisterForm, setUsers }: IRegister ) => {
+const Register = ( { setRegisterForm, setUsers, userId, userPermissionId, permissions }: IRegister ) => {
 
     const [name, setName] = useState<string>('');
     const [surname, setSurname] = useState<string>('');
@@ -37,11 +41,14 @@ const Register = ( { setRegisterForm, setUsers }: IRegister ) => {
             form.append('email', email);
             form.append('password', password);
             form.append('permissionId', permissionId);
+            form.append('admin_id', String(userId));
             await fetch(API_URL + 'users/create', {
                 method: 'POST',
                 body: form
             })
-            setUsers(await getUsers());
+            if(userId) {
+                setUsers(await getUsers(userId, userPermissionId));
+            }
             setRegisterForm(false);
             isSubmitting = false;
         }
@@ -88,9 +95,11 @@ const Register = ( { setRegisterForm, setUsers }: IRegister ) => {
                 <div className='w-full text-sm'>
                     <p className='text-[#00000099] mb-1.5'>Права доступа</p>
                     <select onChange={ (e) => setPermissionId(e.target.value) } className='outline-none w-full h-fit bg-[#F0F0F0] text-base rounded px-2 py-1.5'>
-                        <option value={1}>Пользователь</option>
-                        <option value={2}>Редактор</option>
-                        <option value={3}>Администратор</option>
+                        { permissions.map( permission => {
+                            return (
+                                <option key={ permission.id } value={ permission.id }>{ permission.name }</option>
+                            )
+                        } ) }
                     </select>
                 </div>
                 <button onClick={() => handleClick() } className='bg-black text-white p-2 py-2 rounded hover:bg-gray-800'>Зарегистрироваться</button>

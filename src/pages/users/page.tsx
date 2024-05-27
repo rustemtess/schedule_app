@@ -27,11 +27,11 @@ const Users = ( ) => {
     
     useEffect(() => {
         fetchData()
-    }, []);
+    }, [data]);
 
     const fetchData = async () => {
-        setUsers(await getUsers());
-        setPermissions(await getPermissions());
+        setUsers(await getUsers(data?.id, data?.permissionId));
+        setPermissions(await getPermissions(data?.permissionId));
     };
 
     const deleteById = async (user_id: number) => {
@@ -90,7 +90,7 @@ const Users = ( ) => {
                     </div>
                     
                 </div>
-                { isRegisterForm && <Register setRegisterForm={ setRegisterForm } setUsers={ setUsers } /> }
+                { isRegisterForm && <Register permissions={ permissions } userPermissionId={ data?.permissionId } userId={ data?.id } setRegisterForm={ setRegisterForm } setUsers={ setUsers } /> }
                 <div className='w-full overflow-x-auto'>
                     <table className='w-full overflow-x-auto'>
                         <tbody className='flex flex-col w-full justify-center items-center gap-2'>
@@ -102,7 +102,7 @@ const Users = ( ) => {
                                 <th className='w-[120px] w-full font-normal px-2'>Действия</th>
                             </tr>
                             { (users.length > 0) ? users.map( user => {
-                                return <tr key={ user.id } className='flex items-center w-full text-gray-800'>
+                                if(user.id != data?.id) return <tr key={ user.id } className='flex items-center w-full text-gray-800'>
                                 <th className='w-[450px] w-full font-normal px-2'>{ `${user.surname} ${user.name} ${user.middlename}` }</th>
                                 <th className='w-[150px] w-full font-normal px-2'>{ user.number }</th>
                                 <th className='w-[150px] w-full font-normal px-2'>{ user.email }</th>
