@@ -29,7 +29,7 @@ const Router = () => {
                             <Route path='/users' element={ <Users  /> } />
                         </>
                     }
-                    <Route path='*' element={ <h1 className='text-white'>awdwa</h1> } />
+                    <Route path='*' element={ <h1 className='text-gray-900 w-full min-h-screen bg-white flex justify-center items-center text-xl'>Страница не найдена</h1> } />
                 </Routes>
             </BrowserRouter>
         </Suspense>
