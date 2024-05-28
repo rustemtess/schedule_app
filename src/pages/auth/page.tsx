@@ -29,7 +29,7 @@ const Auth  = ( { setIsAuth }: IAuth ) => {
             if(result.access_token) {
                 toast.success('Успешная авторизация');
                 setTimeout(() => {
-                    sessionStorage.setItem('access_token', result.access_token)
+                    localStorage.setItem('access_token', result.access_token)
                     setIsAuth(true)
                     navigate('/');
                 }, 2000)

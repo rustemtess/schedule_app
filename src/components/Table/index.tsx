@@ -52,12 +52,14 @@ const Table = ({ countMeetToParent, isEdit = false, dataList, date = new Date(),
 
     const getDate = () => {
         return getDays(date).map( currentDate => {
+            const currentDateAndTime = Number(Math.floor(Date.now() / 1000));
+            const oldCurrentDateAndTime = Number(Math.floor(Date.parse(currentDate.date.toDateString()) / 1000));
             return (
                 <th key={ `${currentDate.year}-${currentDate.month}-${currentDate.day}` } className={ `w-[220px] mb-2` }>
                     <h1 className={ `${ (!isExport) ? `text-4xl` : `text-5xl mb-2` } font-medium` }>{ currentDate.day }</h1>
                     <p className={ `${ (!isExport) ? '' : 'text-xl' } text-gray-700 font-normal` }>{ getWeekName(currentDate.weekNumber) }</p>
                     {
-                        (isEdit) ? <button onClick={() => {
+                        ((isEdit && new Date().toLocaleDateString() == currentDate.date.toLocaleDateString()) || (isEdit && currentDateAndTime <= oldCurrentDateAndTime)) ? <button onClick={() => {
                             setAddTime(true)
                             setDay( currentDate )
                         }} className='bg-black text-white w-full p-2 font-normal mt-2 rounded hover:bg-gray-800'>+ Добавить</button>
