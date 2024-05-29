@@ -53,12 +53,12 @@ const Auth  = ( { setIsAuth }: IAuth ) => {
                         </svg>
                     </div>
                     <div className='w-full'>
-                        <p className='text-[#00000099] text-sm pb-2'>Ном.телефона или E-mail</p>
-                        <input onChange={ (e) => setLogin(e.target.value) } className='border outline-none w-full bg-[#F0F0F0] rounded p-2 px-4'></input>
+                        <p className='text-[#00000099] text-sm pb-2'>Ном.телефона (без +) или email</p>
+                        <input placeholder='7 --- --- -- -- или email' onChange={ (e) => setLogin(e.target.value) } className='border outline-none w-full bg-[#F0F0F0] rounded p-2 px-4'></input>
                     </div>
                     <div className='w-full'>
                         <p className='text-[#00000099] text-sm pb-2'>Введите пароль</p>
-                        <input type='password' onChange={ (e) => setPassword(e.target.value) } className='border outline-none w-full bg-[#F0F0F0] rounded p-2 px-4'></input>
+                        <input placeholder='Пароль' type='password' onChange={ (e) => setPassword(e.target.value) } className='border outline-none w-full bg-[#F0F0F0] rounded p-2 px-4'></input>
                     </div>
                     <button onClick={ () => handleClick() } className='w-full h-fit bg-black text-white rounded px-4 py-3 hover:bg-gray-800'>Войти в аккаунт</button>
                 </div>

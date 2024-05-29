@@ -37,7 +37,7 @@ const Register = ( { setRegisterForm, setUsers, userId, userPermissionId, permis
             form.append('name', name);
             form.append('surname', surname);
             form.append('middlename', middlename);
-            form.append('number', number);
+            form.append('number', '7' + number);
             form.append('email', email);
             form.append('password', password);
             form.append('permissionId', permissionId);
@@ -78,11 +78,14 @@ const Register = ( { setRegisterForm, setUsers, userId, userPermissionId, permis
                     <input onChange={ (e) => setMiddlename(e.target.value) } className='outline-none w-full h-fit bg-[#F0F0F0] text-base rounded px-2 py-1.5'></input>
                 </div>
                 <div className='w-full text-sm'>
-                    <p className='text-[#00000099] mb-1.5'>Введите номер телефона (без +)</p>
-                    <input onChange={ (e) => {
-                        if (e.target.value.length <= 11) setNumber(e.target.value)
-                        else setNumber(e.target.value.substring(0, 11))
-                    } } placeholder='7 --- --- -- --' type='number' value={number} className='outline-none w-full h-fit bg-[#F0F0F0] text-base rounded px-2 py-1.5'></input>
+                    <p className='text-[#00000099] mb-1.5'>Введите номер телефона</p>
+                    <div className='flex items-center rounded bg-[#F0F0F0]'>
+                        <p className='outline-none w-fit h-fit text-base px-2 pr-1 py-1.5'>+7</p>
+                        <input value={number} onChange={ (e) => {
+                            if (e.target.value.length <= 10) setNumber(e.target.value)
+                            else setNumber(e.target.value.substring(0, 10))
+                        } } placeholder='--- --- -- --' type='number' className='outline-none bg-transparent w-full h-fit text-base pl-1 px-2 py-1.5'></input>
+                    </div>
                 </div>
                 <div className='w-full text-sm'>
                     <p className='text-[#00000099] mb-1.5'>Введите E-mail</p>
