@@ -26,13 +26,13 @@ const Header = ( { children, data, isUpdated }: IHeader ) => {
         try {
             const userData: IUser = await getUser();
             if(userData.id === undefined) {
-                sessionStorage.clear();
+                localStorage.clear();
                 document.location.href = '/';
             }
             setUser(userData);
             if(data) data(userData)
         }catch {
-            sessionStorage.clear();
+            localStorage.clear();
             document.location.href = '/';
         }finally {
             setLoading(false);
