@@ -108,14 +108,15 @@ const Users = ( ) => {
                                 <th className='w-[150px] w-full font-normal px-2'>{ user.email }</th>
                                 <th className='w-[170px] w-full font-normal px-2'>
                                     <select defaultValue={ user.permissionId } onChange={ (e) => setPermissionId(Number(e.target.value)) } className='bg-[#F9F9F9] outline-none cursor-pointer hover:bg-gray-100 p-2 rounded'>
-                                        { permissions.map( permission => {
+                                        { (user.permissionId == 4) && <option disabled key={ 4 } value={ 4 }>Супер-Администратор</option> }
+                                        { (user.permissionId != 4) && permissions.map( permission => {
                                             return (
                                                 <option key={ permission.id } selected={ (permission.id === user.permissionId) ? true : false } value={ permission.id }>{ permission.name }</option>
                                             )
                                         } ) }
                                     </select>
                                 </th>
-                                <th className='flex justify-center w-[120px] w-full gap-1'>
+                                { (user.permissionId != 4) && <th className='flex justify-center w-[120px] w-full gap-1'>
                                     <button onClick={ () => updateById(user.id) } className='flex items-center w-fit h-fit bg-black rounded p-2 text-white font-normal gap-1.5 px-3 hover:bg-gray-800'>
                                         <svg width='16' height='16' viewBox='0 0 18 16' fill='none' xmlns='http://www.w3.org/2000/svg'>
                                             <g clip-path='url(#clip0_55_324)'>
@@ -143,7 +144,8 @@ const Users = ( ) => {
                                             </defs>
                                         </svg>
                                     </button>
-                                </th>
+                                </th> }
+                                { (user.permissionId == 4) && <th className='flex justify-center w-[120px] w-full gap-1'></th> }
                             </tr>
                             }) : <tr>
                                 <th className='w-[450px] w-full font-normal text-gray-500 pt-2 text-sm'>Список пуст</th>
