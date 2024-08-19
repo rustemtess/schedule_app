@@ -88,7 +88,7 @@ const Index = () => {
                     </div>
                     <button onClick={ () => {
                         setShowForm(true)
-                    } } className='bg-black text-white w-fit p-1 px-3 font-normal rounded hover:bg-gray-800'>Экпорт таблицы</button>
+                    } } className='bg-black text-white w-fit p-1 px-3 font-normal rounded hover:bg-gray-800'>Экcпорт таблицы</button>
                     <div className='flex items-center gap-1'>
                         <button onClick={ () => fetchData() } className='bg-gray-100 border p-2.5 rounded fill-[#2B2B2B] hover:bg-gray-800 hover:fill-white duration-200'>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><g id="_01_align_center" data-name="01 align center"><path d="M24,22.586l-6.262-6.262a10.016,10.016,0,1,0-1.414,1.414L22.586,24ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/></g></svg>
@@ -100,10 +100,10 @@ const Index = () => {
                     </div>
                 </div>
                 { isShowForm && <ShowFormForExport /> }
-                <Table userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isEdit={ (data?.permissionId && data?.permissionId >= 2) ? true : false } />
+                <Table userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isListAccess={ (data?.permissionId && data?.permissionId >= 3) ? true : false } isEdit={ (data?.permissionId && data?.permissionId >= 2) ? true : false } />
                 { createPortal(
                     <div className='absolute top-[-9999px]' ref={ targetRef }>
-                        <Table user={ data } isExport={ true } userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isEdit={ false } />
+                        <Table user={ data } isExport={ true } userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isListAccess={ (data?.permissionId && data?.permissionId >= 3) ? true : false } isEdit={ false } />
                     </div>,
                     document.body
                 ) }

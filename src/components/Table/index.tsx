@@ -10,6 +10,7 @@ import { IUser } from '../../pages/users/interface';
 
 interface ITable {
     countMeetToParent: Function,
+    isListAccess?: boolean,
     isEdit?: boolean,
     dataList?: Array<IObject>,
     date?: Date,
@@ -18,7 +19,7 @@ interface ITable {
     user?: IUser|undefined
 }
 
-const Table = ({ countMeetToParent, isEdit = false, dataList, date = new Date(), userId, isExport = false, user }: ITable) => { 
+const Table = ({ countMeetToParent, isListAccess = false, isEdit = false, dataList, date = new Date(), userId, isExport = false, user }: ITable) => { 
 
     const [isAddTime, setAddTime] = useState<boolean>(false);
     const [day, setDay] = useState<IDay>( getDay(new Date()) );
@@ -73,7 +74,7 @@ const Table = ({ countMeetToParent, isEdit = false, dataList, date = new Date(),
     return (
         <div className='overflow-x-auto overflow-y-auto w-full mt-3 pb-14'>
             { isAddTime && <AddTime setDate={ setData } setAddTime={ setAddTime } currentDay={ day } /> }
-            { isInfo && <Info setDate={ setData } userId={ userId } timeId={ timeId } setInfo={ setInfo } edit={ isEdit } /> }
+            { isInfo && <Info setDate={ setData } userId={ userId } timeId={ timeId } setInfo={ setInfo } edit={ isEdit } isListAccess={ isListAccess } /> }
             { isExport && <div className='px-6 text-lg font-sans flex items-center justify-between'>
                 <h4 className='text-lg'>Дата таблицы: { formatDate(date) }</h4>
                 <h4>Время распечатки: { formatDate(new Date()) } { new Date().getHours() + ':' + (date.getMinutes() < 10 ? '0' : '') + date.getMinutes() }. Распечатано: { user?.surname } { user?.name } { user?.middlename }</h4>
