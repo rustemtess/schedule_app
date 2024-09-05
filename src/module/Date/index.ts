@@ -84,7 +84,8 @@ export function getDay(date: Date): IDay {
  * @returns Date YYYY-mm-dd
  */;
 export function getDate(date: Date): string {
-    return date.toLocaleDateString().split('.').reverse().join('-')
+    const newDate = date.toLocaleDateString().replaceAll('/', '.');
+    return newDate.split('.').reverse().join('-')
 }
 
 /**
