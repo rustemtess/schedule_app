@@ -58,6 +58,8 @@ const AddTime = ( { setAddTime, currentDay, setDate }: IAddTime ) => {
         await fetch(API_URL + 'date/create', {
             method: 'POST',
             body: form
+        }).then(response => {
+            if(response.status !== 200) return document.location.href = '/'
         });
     
         setDate(await getList());

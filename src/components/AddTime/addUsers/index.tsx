@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import LoadingPage from '../../../pages/loading';
 import { API_URL } from '../../../module/API';
+import { getSessionAccessToken } from '../../../module/Session';
 
 interface IAddUsers {
     setAddUsers: Function,
@@ -23,19 +24,23 @@ export const AddUsers = ({ setAddUsers, setSelectList, list }: IAddUsers) => {
 
     const fetchData = async () => {
         setLoading(true);
+        const form = new FormData();
+        form.append('access_token', getSessionAccessToken());
         try {
             const response = await fetch(API_URL + 'users/list', {
-                method: 'get',
+                method: 'POST',
+                body: form
             });
 
             if (response.status === 200) {
                 const result = await response.json();
-                // Initialize selected as false for fetched data
                 const initializedData = result.map((item: IUserList) => ({
                     ...item,
                     selected: false
                 }));
                 setData(initializedData);
+            }else {
+                document.location.href = '/';
             }
         } catch (error) {
             console.error('Error fetching data:', error);

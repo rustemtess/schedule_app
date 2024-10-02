@@ -7,6 +7,7 @@ import { IPermission, IUser } from './interface';
 import Header from '../../components/Header';
 import { API_URL } from '../../module/API';
 import { useNavigate } from 'react-router-dom';
+import { getSessionAccessToken } from '../../module/Session';
 
 const Users = ( ) => {
     
@@ -20,38 +21,50 @@ const Users = ( ) => {
     const [fullname, setFullname] = useState<string>('');
 
     useEffect(() => {
-        
         if(data?.permissionId && data?.permissionId <= 2)
             navigate('/')
     }, [data, isUpdate])
     
-    useEffect(() => {
-        fetchData()
-    }, [data]);
-
-    const fetchData = async () => {
-        setUsers(await getUsers(data?.id, data?.permissionId));
-        setPermissions(await getPermissions(data?.permissionId));
+    const fetchData = async (id: number, permissionId: number) => {
+        try {
+            const usersData = await getUsers(id, permissionId);
+            const permissionsData = await getPermissions(permissionId);
+            setPermissions(permissionsData);
+            setUsers(usersData);
+        } catch (error) {
+            console.error('Error fetching users in component:', error); // Логирование исключений
+        }
     };
+    
+    useEffect(() => {
+        if (data && data.id && data.permissionId) {
+            fetchData(data.id, data.permissionId);
+        }
+    }, [data]);
 
     const deleteById = async (user_id: number) => {
         const form = new FormData();
         form.append('user_id', String(user_id));
+        form.append('access_token', getSessionAccessToken());
         await fetch(API_URL + 'users/delete', {
             method: 'POST',
             body: form
+        }).then(response => {
+            if(response.status !== 200) return document.location.href = '/';
         });
-        await fetchData()
+        await fetchData(data.id, data.permissionId)
     };
 
     const fetchData2 = async () => {
         const form = new FormData();
         form.append('fullname', fullname);
+        form.append('access_token', getSessionAccessToken());
         await fetch(API_URL + 'users/search', {
             method: 'POST',
             body: form
         }).then(response => {
             if(response.status === 200) return response.json()
+            else return document.location.href = '/'
         }
         ).then(result => setUsers(result));
     }
@@ -60,11 +73,14 @@ const Users = ( ) => {
         const form = new FormData();
         form.append('user_id', String(user_id));
         form.append('permission_id', String(permissionId));
+        form.append('access_token', getSessionAccessToken());
         await fetch(API_URL + 'users/update', {
             method: 'POST',
             body: form
+        }).then(response => {
+            if(response.status !== 200) return document.location.href = '/'
         });
-        await fetchData()
+        await fetchData(data.id, data.permissionId)
         setIsUpdate(isUpdate + 1)
     };
 
@@ -105,7 +121,7 @@ const Users = ( ) => {
                                 if(user.id != data?.id) return <tr key={ user.id } className='flex items-center w-full text-gray-800'>
                                 <th className='w-[450px] w-full font-normal px-2 text-left'>{ `${user.surname} ${user.name} ${user.middlename}` }</th>
                                 <th className='w-[150px] w-full font-normal px-2'>{ user.number }</th>
-                                <th className='w-[150px] w-full font-normal px-2'>{ user.email }</th>
+                                <th className='w-[150px] w-full font-normal px-2 text-left'>{ user.email }</th>
                                 <th className='w-[170px] w-full font-normal px-2 text-left'>
                                     <select defaultValue={ user.permissionId } onChange={ (e) => setPermissionId(Number(e.target.value)) } className='bg-[#F9F9F9] outline-none cursor-pointer hover:bg-gray-100 p-2 rounded'>
                                         { (user.permissionId == 4) && <option disabled key={ 4 } value={ 4 }>Супер-Администратор</option> }
@@ -118,7 +134,6 @@ const Users = ( ) => {
                                 </th>
                                 { (user.permissionId != 4) && <th className='flex justify-center w-[120px] w-full gap-1'>
                                     <button title='Изменить на выбранный статус' onClick={ () => updateById(user.id) } className='flex items-center w-fit h-fit bg-black rounded p-2 text-white font-normal gap-1.5 px-3 hover:bg-gray-800'>
-                                        
                                         <p>Обновить</p>
                                     </button>
                                     <button title='Удалить аккаунт' onClick={ () => deleteById(user.id) } className='w-fit h-fit bg-red-500 rounded p-3 hover:bg-gray-800'>

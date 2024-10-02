@@ -29,10 +29,11 @@ const Table = ({ countMeetToParent, isListAccess = false, isEdit = false, dataLi
     const [timeId, setTimeId] = useState<number>();
     const [updated, setUpdated] = useState<number>(0);
 
+    const fetchData = async () => {
+        setData(await getList())
+    };
+
     useEffect(() => {
-        const fetchData = async () => {
-            setData(await getList())
-        };
         fetchData();
     }, []);
 

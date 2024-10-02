@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import LoadingPage from "../../../pages/loading";
 import { API_URL } from "../../../module/API";
+import { getSessionAccessToken } from '../../../module/Session';
 
 interface IList {
     setList: Function,
@@ -31,11 +32,13 @@ const List = ( { setList, meetId }: IList ) => {
         setLoading(true);
         const form = new FormData();
         form.append('meet_id', String(meetId))
+        form.append('access_token', getSessionAccessToken());
         await fetch(API_URL + 'whatsapp/list', {
             method: 'POST',
             body: form
         }).then(response => {
             if(response.status === 200) return response.json()
+            else return document.location.href = '/'
         }).then(result => {
             setData(result)
             

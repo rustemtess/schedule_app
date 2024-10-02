@@ -9,6 +9,7 @@ import { API_URL } from "../../module/API";
 import { IObject } from "../../components/Table/interfaces";
 import { usePDF } from "react-to-pdf";
 import { createPortal } from "react-dom";
+import { getSessionAccessToken } from "../../module/Session";
 
 const Index = () => {
 
@@ -20,11 +21,10 @@ const Index = () => {
     const [isExport, setExport] = useState<number>(0);
     const [isShowForm, setShowForm] = useState<boolean>(false);
     const { toPDF, targetRef } = usePDF({ filename: `table-${ date.toLocaleDateString() }.pdf` });
-
+    
     function getToday() {
         return date.toISOString().substr(0, 10);
     }
-
 
     useEffect(() => {
         if(isShowForm && isExport > 0 && targetRef.current) {
@@ -36,11 +36,13 @@ const Index = () => {
     const fetchData = async () => {
         const form = new FormData();
         form.append('text', text);
+        form.append('access_token', getSessionAccessToken());
         await fetch(API_URL + 'date/search', {
             method: 'POST',
             body: form
         }).then(response => {
             if(response.status === 200) return response.json()
+            else return document.location.href = '/'
         }
         ).then(result => setDataList(result));
     }
@@ -101,7 +103,7 @@ const Index = () => {
                 </div>
                 { isShowForm && <ShowFormForExport /> }
                 <Table userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isListAccess={ (data?.permissionId && data?.permissionId >= 3) ? true : false } isEdit={ (data?.permissionId && data?.permissionId >= 2) ? true : false } />
-                { createPortal(
+                { isShowForm && createPortal(
                     <div className='absolute top-[-9999px]' ref={ targetRef }>
                         <Table user={ data } isExport={ true } userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isListAccess={ (data?.permissionId && data?.permissionId >= 3) ? true : false } isEdit={ false } />
                     </div>,

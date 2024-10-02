@@ -4,6 +4,7 @@ import LoadingPage from "../../../pages/loading";
 import { filterDateAndTime } from "../../../module/Date";
 import { getList } from "../../../module/API/api.date";
 import List from "../List";
+import { getSessionAccessToken } from "../../../module/Session";
 
 interface IInfo {
     timeId: number|undefined,
@@ -33,11 +34,13 @@ const Info = ( { timeId, setInfo, edit = false, userId, setDate, isListAccess = 
         setLoading(true);
         const form = new FormData();
         form.append('time_id', String(timeId))
+        form.append('access_token', getSessionAccessToken());
         await fetch(API_URL + 'date/time/info', {
             method: 'POST',
             body: form
         }).then(response => {
             if(response.status === 200) return response.json()
+            else return document.location.href = '/'
         }).then(result => setData(result)).finally( () => setLoading(false))
     }
 
@@ -49,9 +52,12 @@ const Info = ( { timeId, setInfo, edit = false, userId, setDate, isListAccess = 
         const form = new FormData();
         form.append('time_id', String(timeId));
         form.append('user_id', String(userId));
+        form.append('access_token', getSessionAccessToken());
         await fetch(API_URL + 'date/time/delete', {
             method: 'POST',
             body: form
+        }).then(response => {
+            if(response.status !== 200) return document.location.href = '/'
         })
         await setInfo(false)
         setDate(await getList())

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { API_URL } from "../../module/API";
 import { getUsers } from "../../module/API/api.users";
 import { IPermission } from "../../pages/users/interface";
+import { getSessionAccessToken } from "../../module/Session";
 
 interface IRegister {
     setRegisterForm: Function,
@@ -42,9 +43,12 @@ const Register = ( { setRegisterForm, setUsers, userId, userPermissionId, permis
             form.append('password', password);
             form.append('permissionId', permissionId);
             form.append('admin_id', String(userId));
+            form.append('access_token', getSessionAccessToken());
             await fetch(API_URL + 'users/create', {
                 method: 'POST',
                 body: form
+            }).then(response => {
+                if(response.status !== 200) return document.location.href = '/'
             })
             if(userId) {
                 setUsers(await getUsers(userId, userPermissionId));
