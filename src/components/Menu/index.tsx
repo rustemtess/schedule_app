@@ -42,7 +42,7 @@ const Menu = ({ id, data }: IMenu) => {
     })
 
     return (
-        <section className={ `bg-[#F8F9FB] flex ${ (!isMobile) ? `w-fit min-h-screen min-w-fit flex-col` : `w-full absolute bottom-0 left-0` } justify-between` }>
+        <section className={ `bg-[#F8F9FB] flex ${ (!isMobile) ? `w-fit min-h-screen min-w-fit flex-col` : `w-full fixed bottom-0 left-0` } justify-between` }>
             <nav className={ `flex ${ (!isMobile) ? `flex-col` : `w-full justify-center` } text-xl` }>
                 { MenuList.map( (item, index) => {
                     if(data?.permissionId && item.permission <= data?.permissionId) {

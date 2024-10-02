@@ -187,14 +187,14 @@ const Users = ( ) => {
                             </tr> }
                         </tbody>
                     </table>
-                    <div className='flex justify-center gap-2 mt-5'>
-                        <button onClick={() => back()} className='bg-black text-white p-2 px-4 rounded hover:bg-gray-800'>
-                            ← Назад
-                        </button>
-                        <button onClick={() => next()} className='bg-black text-white p-2 px-4 rounded hover:bg-gray-800'>
-                            Вперед →
-                        </button>
-                    </div>
+                </div>
+                <div className='flex justify-center gap-2 mt-5 mb-3'>
+                    <button onClick={() => back()} className='bg-black text-white p-2 px-4 rounded hover:bg-gray-800'>
+                        ← Назад
+                    </button>
+                    <button onClick={() => next()} className='bg-black text-white p-2 px-4 rounded hover:bg-gray-800'>
+                        Вперед →
+                    </button>
                 </div>
             </section>
         </Container>
