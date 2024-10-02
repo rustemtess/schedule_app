@@ -19,6 +19,8 @@ const Users = ( ) => {
     const [permissionId, setPermissionId] = useState<number>();
     const [isUpdate, setIsUpdate] = useState<number>(0);
     const [fullname, setFullname] = useState<string>('');
+    const [offset, setOffset] = useState<number>(0);
+    const [id, setId] = useState<number>(0);
 
     useEffect(() => {
         if(data?.permissionId && data?.permissionId <= 2)
@@ -27,6 +29,7 @@ const Users = ( ) => {
     
     const fetchData = async (id: number, permissionId: number) => {
         try {
+            setId(id);
             const usersData = await getUsers(id, permissionId);
             const permissionsData = await getPermissions(permissionId);
             setPermissions(permissionsData);
@@ -83,6 +86,32 @@ const Users = ( ) => {
         await fetchData(data.id, data.permissionId)
         setIsUpdate(isUpdate + 1)
     };
+
+    async function getOffsetUsers(newOffset: number) {
+        const usersData = await getUsers(id, permissionId, 10, newOffset);
+        setUsers(usersData);
+    }
+    
+
+    const next = async () => {
+        if (users.length > 0)
+            setOffset(prev => {
+                const newOffset = prev + 10;
+                getOffsetUsers(newOffset); // Fetch users with the new offset
+                return newOffset;
+            });
+    };
+    
+    const back = async () => {
+        if((offset - 10) >= 0)
+            setOffset(prev => {
+                const newOffset = Math.max(prev - 10, 0); // Prevent negative offset
+                getOffsetUsers(newOffset); // Fetch users with the new offset
+                return newOffset;
+            });
+    };
+    
+    
 
     return (
         <Container>
@@ -158,6 +187,14 @@ const Users = ( ) => {
                             </tr> }
                         </tbody>
                     </table>
+                    <div className='flex justify-center gap-2 mt-5'>
+                        <button onClick={() => back()} className='bg-black text-white p-2 px-4 rounded hover:bg-gray-800'>
+                            ← Назад
+                        </button>
+                        <button onClick={() => next()} className='bg-black text-white p-2 px-4 rounded hover:bg-gray-800'>
+                            Вперед →
+                        </button>
+                    </div>
                 </div>
             </section>
         </Container>

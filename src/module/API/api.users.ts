@@ -1,13 +1,13 @@
 import { API_URL } from "."
 import { getSessionAccessToken } from "../../module/Session";
 
-export const getUsers = async (adminId: number|undefined, permissionId: number|undefined) => {
+export const getUsers = async (adminId: number|undefined, permissionId: number|undefined, limit: number = 10, offset: number = 0) => {
     const form = new FormData();
     form.append('admin_id', String(adminId));
     if(permissionId) form.append('isSuperAdmin', (permissionId > 3) ? '1' : '0');
     else form.append('isSuperAdmin', '0');
-    form.append('limit', '100');
-    form.append('offset', '0');
+    form.append('limit', limit.toString());
+    form.append('offset', offset.toString());
     form.append('access_token', getSessionAccessToken());
     const response = await fetch(API_URL + 'users/getlist', {
         method: 'POST',

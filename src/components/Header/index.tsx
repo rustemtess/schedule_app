@@ -3,7 +3,6 @@ import { IUser } from "../../pages/users/interface";
 import { getUser } from "../../module/API/api.users";
 import LoadingPage from "../../pages/loading";
 import { useMediaQuery } from 'react-responsive';
-import { profile } from "console";
 
 interface IHeader {
     children?: ReactNode,
@@ -93,12 +92,12 @@ const Header = ( { children, data, isUpdated }: IHeader ) => {
     }
 
     return (loading) ? <LoadingPage /> : <header className='w-full flex items-center justify-between px-4 py-2 border-b-[0.5px] border-gray-200'>
-    <div>
-        { children }
-    </div>
-    { (!isMobile) ? <PCBlock /> : <MobileBlock /> }
-    { isProfile && <Profile /> }
-</header>
+        <div>
+            { children }
+        </div>
+        { (!isMobile) ? <PCBlock /> : <MobileBlock /> }
+        { isProfile && <Profile /> }
+    </header>
     
 
 };
