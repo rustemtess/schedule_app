@@ -54,7 +54,7 @@ const AddTime = ( { setAddTime, currentDay, setDate }: IAddTime ) => {
             form.append('ids', 
                 JSON.stringify(selectList.filter(e => e.selected).map(e => String(e.id)))
             );
-
+        setAddTime(false);
         await fetch(API_URL + 'date/create', {
             method: 'POST',
             body: form
@@ -63,7 +63,6 @@ const AddTime = ( { setAddTime, currentDay, setDate }: IAddTime ) => {
         });
     
         setDate(await getList());
-        setAddTime(false);
         isSubmitting = false;
     };
 
