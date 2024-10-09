@@ -98,3 +98,7 @@ export function filterDateAndTime(dateAndTime: string|undefined): string|undefin
     const arr = dateAndTime.split(' ');
     return `${ arr[0].split('-').reverse().join('.') } ${ arr[1] }`
 }
+
+export function getToday(date: Date) {
+    return date.toISOString().substr(0, 10);
+}

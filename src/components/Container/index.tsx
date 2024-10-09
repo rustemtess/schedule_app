@@ -1,8 +1,4 @@
-import { ReactNode } from "react";
-
-interface IContainer {
-    children?: ReactNode
-};
+import { IContainer } from "./container.interface";
 
 const Container = ( { children }: IContainer ) => {
     
