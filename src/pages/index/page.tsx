@@ -1,14 +1,15 @@
 import Container from "../../components/Container";
 import Table from "../../components/Table";
-import { formatDate, getAfterDate } from '../../module/Date';
+import { formatDate, getAfterDate, getToday } from '../../module/Date';
 import Menu from "../../components/Menu";
 import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { IUser } from "../users/interface";
 import { API_URL } from "../../module/API";
-import { IObject } from "../../components/Table/interfaces";
 import { usePDF } from "react-to-pdf";
 import { createPortal } from "react-dom";
+import { getSessionAccessToken } from "../../module/Session";
+import { IObject } from "../../components/Table/table.interface";
 
 const Index = () => {
 
@@ -21,11 +22,6 @@ const Index = () => {
     const [isShowForm, setShowForm] = useState<boolean>(false);
     const { toPDF, targetRef } = usePDF({ filename: `table-${ date.toLocaleDateString() }.pdf` });
 
-    function getToday() {
-        return date.toISOString().substr(0, 10);
-    }
-
-
     useEffect(() => {
         if(isShowForm && isExport > 0 && targetRef.current) {
             toPDF()
@@ -34,15 +30,22 @@ const Index = () => {
     }, [isExport, targetRef])
 
     const fetchData = async () => {
+
         const form = new FormData();
         form.append('text', text);
+        form.append('access_token', getSessionAccessToken());
+
         await fetch(API_URL + 'date/search', {
             method: 'POST',
             body: form
         }).then(response => {
-            if(response.status === 200) return response.json()
+            if(response.status === 200) 
+                return response.json()
+            else 
+                document.location.href = '/'
         }
         ).then(result => setDataList(result));
+
     }
 
     const ShowFormForExport = () => {
@@ -70,7 +73,10 @@ const Index = () => {
 
     return (
         <Container>
-            <Menu id={1} data={ data } />
+            <Menu 
+                id={1} 
+                data={ data } 
+            />
             <section className='w-full min-h-screen flex flex-col overflow-y-auto pb-4'>
                 <Header data={ setData }>
                     <h2 className='text-2xl font-medium'>{ formatDate(new Date(date)) }</h2>
@@ -78,11 +84,15 @@ const Index = () => {
                 </Header>
                 <div className='flex flex-wrap justify-between gap-2 p-3'>
                     <div className='flex items-center gap-2 text-lg'>
-                        <input value={ getToday() } type='date' onChange={ (e) => {
-                            setDate(new Date(e.target.value))
-                        } } className='
-                            bg-gray-100 border p-1.5 rounded outline-none
-                        ' />
+                        <input 
+                            value={ getToday(date) } 
+                            type='date' 
+                            onChange={ (e) => {
+                                setDate(new Date(e.target.value))
+                            } } 
+                            className='
+                                bg-gray-100 border p-1.5 rounded outline-none' 
+                        />
                         <p>до</p>
                         <h3>{ getAfterDate(date).toLocaleDateString() }</h3>
                     </div>
@@ -93,24 +103,42 @@ const Index = () => {
                         <button onClick={ () => fetchData() } className='bg-gray-100 border p-2.5 rounded fill-[#2B2B2B] hover:bg-gray-800 hover:fill-white duration-200'>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18"><g id="_01_align_center" data-name="01 align center"><path d="M24,22.586l-6.262-6.262a10.016,10.016,0,1,0-1.414,1.414L22.586,24ZM10,18a8,8,0,1,1,8-8A8.009,8.009,0,0,1,10,18Z"/></g></svg>
                         </button>
-                        <input onChange={ (e) => setText(e.target.value) } 
-                        onKeyUp={ (e) => {
-                            if(e.key === 'Enter') fetchData()
-                        } } placeholder='Поиск...' className='outline-none max-w-[300px] w-full h-fit bg-gray-100 border rounded px-3.5 py-1.5'></input>
+                        <input 
+                            onChange={ (e) => setText(e.target.value) } 
+                            onKeyUp={ (e) => {
+                                if(e.key === 'Enter') fetchData()
+                            } } 
+                            placeholder='Поиск...' 
+                            className='outline-none max-w-[300px] w-full h-fit bg-gray-100 border rounded px-3.5 py-1.5'
+                        />
                     </div>
                 </div>
-                { isShowForm && <ShowFormForExport /> }
-                <Table userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isListAccess={ (data?.permissionId && data?.permissionId >= 3) ? true : false } isEdit={ (data?.permissionId && data?.permissionId >= 2) ? true : false } />
-                { createPortal(
-                    <div className='absolute top-[-9999px]' ref={ targetRef }>
-                        <Table user={ data } isExport={ true } userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isListAccess={ (data?.permissionId && data?.permissionId >= 3) ? true : false } isEdit={ false } />
-                    </div>,
-                    document.body
-                ) }
+                { 
+                    isShowForm 
+                    && 
+                    <ShowFormForExport /> 
+                }
+                <Table 
+                    userId={ data?.id } 
+                    date={ date } 
+                    dataList={ dataList } 
+                    countMeetToParent={ setCountMeet } 
+                    isListAccess={ (data?.permissionId && data?.permissionId >= 3) ? true : false } 
+                    isEdit={ (data?.permissionId && data?.permissionId >= 2) ? true : false } 
+                />
+                { 
+                    isShowForm 
+                    && 
+                    createPortal(
+                        <div className='absolute top-[-9999px]' ref={ targetRef }>
+                            <Table user={ data } isExport={ true } userId={ data?.id } date={ date } dataList={ dataList } countMeetToParent={ setCountMeet } isListAccess={ (data?.permissionId && data?.permissionId >= 3) ? true : false } isEdit={ false } />
+                        </div>,
+                        document.body
+                    ) 
+                }
             </section>
         </Container>
     )
-
 }
 
 export default Index

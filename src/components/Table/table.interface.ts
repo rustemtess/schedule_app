@@ -1,3 +1,16 @@
+import { IUser } from "../../pages/users/interface"
+
+export interface ITable {
+    countMeetToParent: Function,
+    isListAccess?: boolean,
+    isEdit?: boolean,
+    dataList?: Array<IObject>,
+    date?: Date,
+    userId: number|undefined,
+    isExport?: boolean,
+    user?: IUser|undefined
+}
+
 export interface IDate {
     date: number,
     dateName: string

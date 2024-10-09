@@ -1,17 +1,17 @@
 import { useState } from "react";
 import { API_URL } from "../../module/API";
 import { getUsers } from "../../module/API/api.users";
-import { IPermission } from "../../pages/users/interface";
+import { getSessionAccessToken } from "../../module/Session";
+import { IRegister } from "./register.interface";
+import toast, { Toaster } from "react-hot-toast";
 
-interface IRegister {
-    setRegisterForm: Function,
-    setUsers: Function,
-    userId?: number,
-    userPermissionId?: number,
-    permissions: Array<IPermission>
-}
-
-const Register = ( { setRegisterForm, setUsers, userId, userPermissionId, permissions }: IRegister ) => {
+const Register = ({ 
+    setRegisterForm, 
+    setUsers, 
+    userId, 
+    userPermissionId, 
+    permissions 
+}: IRegister ) => {
 
     const [name, setName] = useState<string>('');
     const [surname, setSurname] = useState<string>('');
@@ -24,15 +24,18 @@ const Register = ( { setRegisterForm, setUsers, userId, userPermissionId, permis
     let isSubmitting = false;
 
     const handleClick = async () => {
-        if(
+        if(number.length < 10){
+            toast.error('Проверьте корректность номера');
+        }
+        else if(
             name.trim() !== '' && 
             surname.trim() !== '' &&  
             number.trim() !== '' &&
-            email.trim() !== '' &&
             password.trim() !== ''
         ) {
             if (isSubmitting) return;
             isSubmitting = true;
+    
             const form = new FormData();
             form.append('name', name);
             form.append('surname', surname);
@@ -42,17 +45,39 @@ const Register = ( { setRegisterForm, setUsers, userId, userPermissionId, permis
             form.append('password', password);
             form.append('permissionId', permissionId);
             form.append('admin_id', String(userId));
-            await fetch(API_URL + 'users/create', {
-                method: 'POST',
-                body: form
-            })
-            if(userId) {
-                setUsers(await getUsers(userId, userPermissionId));
+            form.append('access_token', getSessionAccessToken());
+    
+            try {
+                const response = await fetch(API_URL + 'users/create', {
+                    method: 'POST',
+                    body: form
+                });
+    
+                const jsonResponse = await response.json().catch(() => null);
+    
+                if (response.status !== 200) {
+                    if (jsonResponse && jsonResponse.error) {
+                        toast.error(jsonResponse.error);
+                    } else {
+                        document.location.href = '/';
+                    }
+                } else {
+                    setRegisterForm(false);
+                }
+    
+                if (userId) {
+                    setUsers(await getUsers(userId, userPermissionId));
+                }
+            } catch (error) {
+                toast.error('Произошла ошибка при запросе');
+            } finally {
+                isSubmitting = false;
             }
-            setRegisterForm(false);
-            isSubmitting = false;
+        } 
+        else {
+            toast.error('Вы не заполнили поле');
         }
-    }
+    }    
 
     return (
         <div className='absolute top-0 left-0 flex justify-center items-center min-h-screen w-full p-2' style={ {
@@ -74,7 +99,7 @@ const Register = ( { setRegisterForm, setUsers, userId, userPermissionId, permis
                     <input onChange={ (e) => setSurname(e.target.value) } className='outline-none w-full h-fit bg-[#F0F0F0] text-base rounded px-2 py-1.5'></input>
                 </div>
                 <div className='w-full text-sm'>
-                    <p className='text-[#00000099] mb-1.5'>Введите отчество</p>
+                    <p className='text-[#00000099] mb-1.5'>Введите отчество <span className='text-gray-500 italic'>(Необязательно)</span></p>
                     <input onChange={ (e) => setMiddlename(e.target.value) } className='outline-none w-full h-fit bg-[#F0F0F0] text-base rounded px-2 py-1.5'></input>
                 </div>
                 <div className='w-full text-sm'>
@@ -82,13 +107,14 @@ const Register = ( { setRegisterForm, setUsers, userId, userPermissionId, permis
                     <div className='flex items-center rounded bg-[#F0F0F0]'>
                         <p className='outline-none w-fit h-fit text-base px-2 pr-1 py-1.5'>+7</p>
                         <input value={number} onChange={ (e) => {
-                            if (e.target.value.length <= 10) setNumber(e.target.value)
+                            if (e.target.value.length <= 10) 
+                                setNumber(e.target.value)
                             else setNumber(e.target.value.substring(0, 10))
                         } } placeholder='--- --- -- --' type='number' className='outline-none bg-transparent w-full h-fit text-base pl-1 px-2 py-1.5'></input>
                     </div>
                 </div>
                 <div className='w-full text-sm'>
-                    <p className='text-[#00000099] mb-1.5'>Введите E-mail</p>
+                    <p className='text-[#00000099] mb-1.5'>Введите E-mail <span className='text-gray-500 italic'>(Необязательно)</span></p>
                     <input onChange={ (e) => setEmail(e.target.value) } type='email' className='outline-none w-full h-fit bg-[#F0F0F0] text-base rounded px-2 py-1.5'></input>
                 </div>
                 <div className='w-full text-sm'>
@@ -100,13 +126,17 @@ const Register = ( { setRegisterForm, setUsers, userId, userPermissionId, permis
                     <select onChange={ (e) => setPermissionId(e.target.value) } className='outline-none w-full h-fit bg-[#F0F0F0] text-base rounded px-2 py-1.5'>
                         { permissions.map( permission => {
                             return (
-                                <option key={ permission.id } value={ permission.id }>{ permission.name }</option>
+                                <option 
+                                    key={ permission.id } 
+                                    value={ permission.id }
+                                >{ permission.name }</option>
                             )
                         } ) }
                     </select>
                 </div>
                 <button onClick={() => handleClick() } className='bg-black text-white p-2 py-2 rounded hover:bg-gray-800'>Зарегистрироваться</button>
             </div>
+            <Toaster />
         </div>
     )
 

@@ -1,20 +1,8 @@
 import {useState, useEffect} from 'react';
 import LoadingPage from '../../../pages/loading';
 import { API_URL } from '../../../module/API';
-
-interface IAddUsers {
-    setAddUsers: Function,
-    setSelectList: Function,
-    list: Array<IUserList> | undefined
-}
-
-export interface IUserList {
-    id: number,
-    name: string,
-    surname: string,
-    middlename: string,
-    selected: boolean
-}
+import { getSessionAccessToken } from '../../../module/Session';
+import { IAddUsers, IUserList } from './addusers.interface';
 
 export const AddUsers = ({ setAddUsers, setSelectList, list }: IAddUsers) => {
 
@@ -23,20 +11,28 @@ export const AddUsers = ({ setAddUsers, setSelectList, list }: IAddUsers) => {
 
     const fetchData = async () => {
         setLoading(true);
+
+        const form = new FormData();
+        form.append('access_token', getSessionAccessToken());
+
         try {
+
             const response = await fetch(API_URL + 'users/list', {
-                method: 'get',
+                method: 'POST',
+                body: form
             });
 
             if (response.status === 200) {
                 const result = await response.json();
-                // Initialize selected as false for fetched data
                 const initializedData = result.map((item: IUserList) => ({
                     ...item,
                     selected: false
                 }));
+
                 setData(initializedData);
-            }
+            }else
+                document.location.href = '/';
+
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -45,17 +41,22 @@ export const AddUsers = ({ setAddUsers, setSelectList, list }: IAddUsers) => {
     };
 
     useEffect(() => {
-        if(list === undefined) fetchData()
-        else {
+
+        if(list !== undefined){
             setData(list)
             setLoading(false)
         }
+
+        fetchData()
+
     }, [list]);
 
     const handleCheckboxChange = (id: number) => {
         setData(prevData =>
             prevData?.map(item =>
-                item.id === id ? { ...item, selected: !item.selected } : item
+                item.id === id 
+                    ? { ...item, selected: !item.selected } 
+                    : item
             )
         );
     };
@@ -72,30 +73,39 @@ export const AddUsers = ({ setAddUsers, setSelectList, list }: IAddUsers) => {
                     </button>
                 </div>
                 <hr />
-                { (loading) ? <LoadingPage /> : <div className='flex flex-col gap-2'>
-                    
-                    <div className='flex flex-col gap-1 max-h-[280px] overflow-auto px-1'>
-                        {
-                            (!data) ? 'Ошибка запроса' : data?.map(e => {
-                                return <div key={e.id} className='flex gap-2 items-center text-gray-700'>
-                                <input checked={ e.selected } key={e.id} onChange={() => {
-                                    handleCheckboxChange(e.id)
-                                }} type='checkbox' className='scale-125' />
-                                <p>{ `${e.surname} ${e.name} ${e.middlename}` }</p>
-                            </div>
-                            })
-                        }
-                    </div>
-
-                    <button onClick={() => {
-                        setSelectList(data)
-                        setAddUsers(false)
-                    }} className='bg-black text-white p-2 py-2.5 rounded hover:bg-gray-800'>
-                       Сохранить
-                    </button>
-                </div> }
-            </div>
-            
+                { 
+                    (loading) 
+                    ? <LoadingPage /> 
+                    : <div className='flex flex-col gap-2'>
+                        <div className='flex flex-col gap-1 max-h-[280px] overflow-auto px-1'>
+                            {
+                                (!data) ? 'Ошибка запроса' : data?.map(e => {
+                                    return <div key={e.id} className='flex gap-2 items-center text-gray-700'>
+                                    <input 
+                                        checked={ e.selected } 
+                                        key={e.id} 
+                                        onChange={() => {
+                                            handleCheckboxChange(e.id)
+                                        }} 
+                                        type='checkbox' 
+                                        className='scale-125' 
+                                    />
+                                    <p>{ `${e.surname} ${e.name} ${e.middlename}` }</p>
+                                </div>
+                                })
+                            }
+                        </div>
+                        <button 
+                            onClick={() => {
+                                setSelectList(data)
+                                setAddUsers(false)
+                            }} 
+                            className='bg-black text-white p-2 py-2.5 rounded hover:bg-gray-800'>
+                        Сохранить
+                        </button>
+                    </div> 
+                }
+            </div>   
         </div>
     );
 
