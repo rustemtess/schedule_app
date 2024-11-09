@@ -55,18 +55,15 @@ const Register = ({
     
                 const jsonResponse = await response.json().catch(() => null);
     
-                if (response.status !== 200) {
+                if (response.status === 200) {
                     if (jsonResponse && jsonResponse.error) {
                         toast.error(jsonResponse.error);
                     } else {
-                        document.location.href = '/';
+                        if (userId) {
+                            setRegisterForm(false);
+                            setUsers(await getUsers(userId, userPermissionId));
+                        }
                     }
-                } else {
-                    setRegisterForm(false);
-                }
-    
-                if (userId) {
-                    setUsers(await getUsers(userId, userPermissionId));
                 }
             } catch (error) {
                 toast.error('Произошла ошибка при запросе');

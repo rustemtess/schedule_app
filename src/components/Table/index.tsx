@@ -25,6 +25,7 @@ const Table = ({
     const [isInfo, setInfo] = useState<boolean>(false);
     const [timeId, setTimeId] = useState<number>();
     const [updated, setUpdated] = useState<number>(0);
+    const [isPastDate, setIsPastDate] = useState<boolean>(false);
 
     const fetchData = async () => {
         setData(await getList())
@@ -43,7 +44,7 @@ const Table = ({
 
         countMeetToParent(data?.reduce((total, currentObject) => {
             return total + currentObject.dateObjects.reduce((subTotal, currentObjectTime) => {
-                if(currentObjectTime.date == currentDate.day)
+                if(currentObjectTime.day == currentDate.day)
                     return subTotal + currentObjectTime.timeObjects.length;
                 else return subTotal;
             }, 0);
@@ -108,6 +109,7 @@ const Table = ({
                     setInfo={ setInfo } 
                     edit={ isEdit } 
                     isListAccess={ isListAccess } 
+                    isPastDate={isPastDate}
                 /> 
             }
             { 
@@ -131,7 +133,18 @@ const Table = ({
                                 { getDays(date).map( (currentDay, index) => (
                                     <td key={ index } className={ `w-[220px] border-[0.5px] flex flex-col gap-1` }>
                                         { currentObject.dateObjects.map( currentObjectTime => {
-                                            if( currentObjectTime.date == currentDay.day ) {
+                                            const selectedDateMonth = Number(date.toLocaleDateString().split('.')[1]);
+                                            const currentDateInTableMonth = Number(currentObjectTime.date.split('-')[1]);
+                                            const selectedDateYear = Number(date.toLocaleDateString().split('.')[2]);
+                                            const currentDateInTableYear = Number(currentObjectTime.date.split('-')[0]);
+                                            const currentDateAndTime = Number(Math.floor(Date.now() / 1000));
+                                            const oldCurrentDateAndTime = Number(Math.floor(Date.parse(currentDay.date.toDateString()) / 1000));
+                                            if(
+                                                (selectedDateYear === currentDateInTableYear) &&
+                                                (selectedDateMonth === currentDateInTableMonth) &&
+                                                ( currentObjectTime.day == currentDay.day)
+                                            ) {
+                                                
                                                 return currentObjectTime.timeObjects.map( (currentTime, index) => {
                                                     return <div key={ index } className='p-1 flex flex-col gap-1.5 rounded px-2 py-2'
                                                     style={ {
@@ -166,6 +179,7 @@ const Table = ({
                                                         </div>
                                                         { !isExport && <div onClick={ () => {
                                                             setTimeId(currentTime.id)
+                                                            setIsPastDate(currentDateAndTime >= oldCurrentDateAndTime)
                                                             setInfo(!isInfo)
                                                         } } className='flex items-center gap-1 cursor-pointer'>
                                                             <svg fill={ `rgb(${ currentTime.rgb })` } xmlns="http://www.w3.org/2000/svg" id="Outline" viewBox="0 0 24 24" width="14" height="14"><path d="M12,0A12,12,0,1,0,24,12,12.013,12.013,0,0,0,12,0Zm0,22A10,10,0,1,1,22,12,10.011,10.011,0,0,1,12,22Z"/><path d="M12,10H11a1,1,0,0,0,0,2h1v6a1,1,0,0,0,2,0V12A2,2,0,0,0,12,10Z"/><circle cx="12" cy="6.5" r="1.5"/></svg>

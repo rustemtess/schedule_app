@@ -25,7 +25,8 @@ export interface ITimeObject {
 }
 
 export interface IDateObject {
-    date: number,
+    day: number,
+    date: string,
     timeObjects: ITimeObject[]
 }
 

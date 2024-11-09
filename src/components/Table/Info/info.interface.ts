@@ -4,7 +4,8 @@ export interface IInfo {
     edit: boolean,
     userId: number|undefined,
     setDate: Function,
-    isListAccess?: boolean
+    isListAccess?: boolean,
+    isPastDate: boolean
 }
 
 export interface IUserInfo {

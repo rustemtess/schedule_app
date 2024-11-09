@@ -108,7 +108,7 @@ const Users = ( ) => {
                 document.location.href = '/'
         });
 
-        await fetchData(data.id, data.permissionId)
+        //await fetchData(data.id, data.permissionId)
         setIsUpdate(isUpdate + 1)
 
     };
@@ -188,7 +188,7 @@ const Users = ( ) => {
                                         return <tr key={ user.id } className='flex items-center w-full text-gray-800'>
                                                 <th className='max-w-[450px] w-full font-normal px-2 text-left'>{ `${user.surname} ${user.name} ${user.middlename}` }</th>
                                                 <th className='max-w-[150px] w-full font-normal px-2'>{ user.number }</th>
-                                                <th className='max-w-[150px] w-full font-normal px-2 text-left'>{ (user.email === null) ? <p className='italic text-gray-500'>Пустой</p> : user.email }</th>
+                                                <th className='max-w-[250px] w-full font-normal px-2 text-left'>{ (user.email === null) ? <p className='italic text-gray-500'>Пустой</p> : user.email }</th>
                                                 <th className='max-w-[170px] w-full font-normal px-2 text-left'>
                                                     <select key={user.number} defaultValue={ user.permissionId } onChange={ (e) => setPermissionId(Number(e.target.value)) } className='bg-[#F9F9F9] outline-none cursor-pointer hover:bg-gray-100 p-2 rounded'>
                                                         { 

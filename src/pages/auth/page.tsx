@@ -35,8 +35,8 @@ const Auth  = ({
                 }, 2000)
             }else
                 toast.error(result.error);
-        }).catch(() => {
-            toast.error('Ошибка запроса');
+        }).catch((e) => {
+            toast.error(e);
         });
 
     }

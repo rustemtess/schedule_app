@@ -13,7 +13,8 @@ const Info = ( {
     edit = false, 
     userId, 
     setDate, 
-    isListAccess = false 
+    isListAccess = false,
+    isPastDate
 }: IInfo ) => {
 
     const [data, setData] = useState<IUserInfo>();
@@ -124,7 +125,7 @@ const Info = ( {
                                 </button> 
                             }
                             { 
-                                edit 
+                               ( edit && !isPastDate ) 
                                 && 
                                 <button 
                                     onClick={ 
