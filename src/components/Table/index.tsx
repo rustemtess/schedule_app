@@ -133,9 +133,9 @@ const Table = ({
                                 { getDays(date).map( (currentDay, index) => (
                                     <td key={ index } className={ `w-[220px] border-[0.5px] flex flex-col gap-1` }>
                                         { currentObject.dateObjects.map( currentObjectTime => {
-                                            const selectedDateMonth = Number(date.toLocaleDateString().split('.')[1]);
+                                            const selectedDateMonth = Number(date.getMonth() + 1);
                                             const currentDateInTableMonth = Number(currentObjectTime.date.split('-')[1]);
-                                            const selectedDateYear = Number(date.toLocaleDateString().split('.')[2]);
+                                            const selectedDateYear = date.getFullYear();
                                             const currentDateInTableYear = Number(currentObjectTime.date.split('-')[0]);
                                             const currentDateAndTime = Number(Math.floor(Date.now() / 1000));
                                             const oldCurrentDateAndTime = Number(Math.floor(Date.parse(currentDay.date.toDateString()) / 1000));
@@ -144,7 +144,7 @@ const Table = ({
                                                 (selectedDateMonth === currentDateInTableMonth) &&
                                                 ( currentObjectTime.day == currentDay.day)
                                             ) {
-                                                
+                                                console.log(123)
                                                 return currentObjectTime.timeObjects.map( (currentTime, index) => {
                                                     return <div key={ index } className='p-1 flex flex-col gap-1.5 rounded px-2 py-2'
                                                     style={ {
