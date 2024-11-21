@@ -1,0 +1,16 @@
+RewriteEngine On
+RewriteBase /
+
+# Не переписывать запросы к API
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteRule ^ - [L]
+
+# Не переписывать запросы к index.html
+RewriteRule ^index\.html$ - [L]
+
+# Убедитесь, что запрашиваемый файл или директория существуют
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Переписывать все остальные запросы на index.html
+RewriteRule . /index.html [L]
